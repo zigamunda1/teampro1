@@ -5,64 +5,55 @@ import { supabase } from "../../lib/supabase";
 import { useNavigate, Link } from "react-router-dom";
 
 function AppHeader() {
-  const navigate = useNavigate();
+  //  Zustand에서 user, clearUser 꺼내오기
   const user = useAuthStore((s) => s.user);
   const clearUser = useAuthStore((s) => s.clearUser);
+  const navigate = useNavigate();
 
+  //  로그아웃 핸들러
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
       clearUser();
       navigate("/sign-in");
-    } catch (error) {
-      console.error("로그아웃 실패:", error);
+    } catch (err: any) {
+      console.error("로그아웃 실패:", err.message);
+      alert("로그아웃 중 문제가 발생했습니다. 다시 시도해 주세요.");
     }
   };
 
   return (
-    <header className="fixed z-10 w-full bg-amber-300 h-14 flex items-center justify-between px-6">
-      <div className="flex items-center justify-center gap-2">
-        <Link to="/" className="text-xl font-bold text-gray-800">
-          뭐먹띠
-        </Link>
-      </div>
-      
-      <div className="flex items-center gap-3">
+    <header className="w-full h-20 p-4 bg-gradient-to-r from-blue-900 via-purple-900 to-blue-900 shadow-lg border-b border-blue-200/20 flex items-center backdrop-blur-sm relative">
+      <div className="absolute inset-0 bg-black/20"></div>
+      <div className="flex-1"></div>
+      <p className="text-white font-bold text-[28px] tracking-wider drop-shadow-lg relative z-10 title-font">
+        YOUR MENU SELECTING PARTNER
+      </p>
+      <div className="flex-1 flex justify-end items-center gap-6">
         {user ? (
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-700">
-              {user.email}
+          <>
+            <span className="text-white text-lg font-medium korean-text relative z-10">
+              {user.email}님
             </span>
-            <Button
-              variant="outline"
-              size="sm"
+            <button
               onClick={handleLogout}
-              className="text-gray-700 hover:bg-gray-100"
+              className="text-white hover:text-blue-200 transition-all duration-300 font-semibold py-2 px-4 rounded-lg hover:bg-white/10 backdrop-blur-sm border border-white/20 relative z-10"
             >
               로그아웃
-            </Button>
-          </div>
+            </button>
+          </>
         ) : (
-          <div className="flex items-center gap-2">
-            <Link to="/sign-in">
-              <Button variant="outline" size="sm">
-                로그인
-              </Button>
-            </Link>
-            <Link to="/sign-up">
-              <Button size="sm">
-                회원가입
-              </Button>
-            </Link>
-          </div>
+          <Link
+            to="/sign-in"
+            className="px-3 py-1 bg-blue-500 text-white rounded relative z-10"
+          >
+            로그인
+          </Link>
         )}
-        
-        <Button variant="ghost" size="sm" className="p-1">
-          <Menu className="w-5 h-5" />
-        </Button>
       </div>
     </header>
   );
 }
 
-export default AppHeader; 
+export default AppHeader;

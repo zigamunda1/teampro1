@@ -1,16 +1,29 @@
 import { useState, useEffect } from "react";
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../components/ui/form';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuthStore } from '../store/auth';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Eye, EyeOff } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { toast } from 'sonner';
+import {
+  Button,
+  Input,
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuthStore } from "@/store/auth";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Eye, EyeOff } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
+import kakaoLogo from "@/assets/kakao.png";
+import googleLogo from "@/assets/google.png";
 
 const formSchema = z.object({
   email: z.string().email("올바른 형식의 이메일 주소를 입력해주세요."),
@@ -19,13 +32,13 @@ const formSchema = z.object({
     .min(8, { message: "비밀번호는 최소 8자 이상이어야 합니다." }),
 });
 
-function SignIn() {
+function SignIN() {
   const navigate = useNavigate();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/home");
+      navigate("/");
     }
   }, [isAuthenticated, navigate]);
 
@@ -87,8 +100,7 @@ function SignIn() {
       setIsLoggingIn(false);
       return;
     }
-    // 로그인 성공시 App.tsx의 onAuthStateChange가 Zustand에 user를 세팅합니다
-    navigate("/home");
+    navigate("/");
   };
 
   return (
@@ -123,10 +135,7 @@ function SignIn() {
                 <FormItem className="relative">
                   <div className="flex items-center justify-between">
                     <FormLabel>비밀번호</FormLabel>
-                    <Link
-                      to="/sign-in/credentials"
-                      className="text-sm underline"
-                    >
+                    <Link to="/reset-pw-rq" className="text-sm underline">
                       비밀번호 찾기
                     </Link>
                   </div>
@@ -141,7 +150,7 @@ function SignIn() {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="absolute top-7 right-1 bg-transparent hover:bg-transparent"
+                    className="absolute top-8 right-2 bg-transparent hover:bg-transparent"
                     onClick={handleTogglePassword}
                   >
                     {showPassword ? (
@@ -154,10 +163,10 @@ function SignIn() {
                 </FormItem>
               )}
             />
-            {/* → 중복 제거, 이 버튼 하나로 submit + loading 처리 */}
+            {/*  중복 제거, 이 버튼 하나로 submit + loading 처리 */}
             <Button
               type="submit"
-              variant="default"
+              variant="primary"
               className="w-full text-black"
               disabled={isLoggingIn}
             >
@@ -177,14 +186,14 @@ function SignIn() {
 
         <div className="grid grid-cols-1 gap-4">
           <Button
-            variant="default"
+            variant="kakao"
             type="button"
             className="w-full justify-between bg-amber-400 gap-2"
             disabled={isLoggingIn}
             onClick={handleKakaoLogin}
           >
             <img
-              src="/src/assets/kakao.png"
+              src={kakaoLogo}
               alt="Kakao logo"
               className="size-5 mr-1"
             />
@@ -192,14 +201,14 @@ function SignIn() {
             <span> </span>
           </Button>
           <Button
-            variant="default"
+            variant="google"
             type="button"
             className="w-full justify-between gap-2"
             disabled={isLoggingIn}
             onClick={handleGoogleLogin}
           >
             <img
-              src="/src/assets/google.png"
+              src={googleLogo}
               alt="Google logo"
               className="size-5 mr-1"
             />
@@ -212,7 +221,7 @@ function SignIn() {
       <CardFooter className="flex flex-col gap-2">
         <div className="text-sm text-center">
           계정이 없으신가요?{" "}
-          <Link to="/sign-up" className="underline ml-1">
+          <Link to="/sign-up-email" className="underline ml-1">
             회원가입
           </Link>
         </div>
@@ -221,4 +230,4 @@ function SignIn() {
   );
 }
 
-export default SignIn;
+export default SignIN;
